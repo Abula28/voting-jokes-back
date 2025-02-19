@@ -1,8 +1,8 @@
 import { Schema, model } from "mongoose";
 
-// Regex to match emojis
-const emojiRegex =
-  /^[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{2600}-\u{26FF}]+$/u;
+function normalizeEmoji(emoji) {
+  return emoji.replace(/\uFE0F/g, ""); // Remove variation selector
+}
 
 const jokeSchema = new Schema(
   {
@@ -15,7 +15,7 @@ const jokeSchema = new Schema(
           type: String,
           validate: {
             validator: function (val) {
-              return emojiRegex.test(val);
+              return /^\p{Extended_Pictographic}+$/u.test(normalizeEmoji(val));
             },
             message: "Vote label must be an emoji!",
           },
